@@ -27,3 +27,9 @@ aiofiles~=24.1.0
 pydantic_core~=2.27.2
 colorama~=0.4.6
 playwright~=1.49.1
+email-validator>=2.2.0
+
+# Database migration dependencies
+alembic>=1.16.4
+sqlalchemy>=2.0.32
+psycopg2-binary>=2.9.10

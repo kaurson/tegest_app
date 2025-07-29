@@ -15,21 +15,8 @@ def get_prompt(agent_name):
     Returns:
         tuple: (system_prompt, user_secondary_prompt)
     """
-    try:
-        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-        response = supabase.table("prompts").select("*").eq("users", agent_name).execute()
-#        response = supabase.table("prompts").select("*").eq("user", agent_name).execute()
-        
-        #print(response)
-        
-        if response.data and len(response.data) > 0:
-            return response.data[0]["system_prompt"], response.data[0]["user_secondary_prompt"]
-        else:
-            print(f"No prompts found for agent: {agent_name}, using default prompts")
-            return DEFAULT_SYSTEM_PROMPT, DEFAULT_NEXT_STEP_PROMPT
-    except Exception as e:
-        print(f"Error fetching prompts from database: {e}")
-        return DEFAULT_SYSTEM_PROMPT, DEFAULT_NEXT_STEP_PROMPT
+    # Use default prompts directly instead of querying database
+    return DEFAULT_SYSTEM_PROMPT, DEFAULT_NEXT_STEP_PROMPT
 
 # Default prompts as fallback
 DEFAULT_SYSTEM_PROMPT = """

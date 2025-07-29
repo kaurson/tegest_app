@@ -7,7 +7,6 @@ from app.agent.toolcall import ToolCallAgent
 from app.prompt.manus import NEXT_STEP_PROMPT, SYSTEM_PROMPT
 from app.tool import Terminate, ToolCollection
 from app.tool.test_tool import TestTool
-#from app.tool.browser_use_tool import BrowserUseTool
 #from app.tool.file_saver import FileSaver
 #from app.tool.python_execute import PythonExecute
 #from app.tool.web_search import WebSearch
@@ -56,14 +55,6 @@ class Manus(ToolCallAgent):
         if not self._is_special_tool(name):
             return
         else:
-            # Safely handle browser tool cleanup if it exists
-            try:
-                browser_tool = self.available_tools.get_tool(BrowserUseTool().name)
-                if browser_tool is not None:
-                    await browser_tool.cleanup()
-            except Exception as e:
-                print(f"Warning: Could not cleanup browser tool: {e}")
-                
             await super()._handle_special_tool(name, result, **kwargs)
 
     async def _handle_terminate_tool(self, step_responses=None, session_id=None, status="success"):

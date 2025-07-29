@@ -14,9 +14,11 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     
     # Basic user information
-    first_name = Column(String(50), nullable=False)
+    first_name = Column(String(50), nullable=True)
+    full_name = Column(String(100), nullable=True)
     username = Column(String(30), unique=True, nullable=False)
     email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(255), nullable=True)
     
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
@@ -30,6 +32,7 @@ class User(Base):
         return {
             'id': str(self.id),
             'first_name': self.first_name,
+            'full_name': self.full_name,
             'username': self.username,
             'email': self.email,
             'created_at': self.created_at,

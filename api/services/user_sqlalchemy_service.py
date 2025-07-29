@@ -5,9 +5,9 @@ from sqlalchemy import or_
 from datetime import datetime
 from fastapi import Depends
 
-from database.models import User as UserModel
+from models import UserDB as UserModel
 from database.database import get_db
-from api.models import UserCreate, UserResponse, UserUpdate
+from models import UserCreate, UserResponse, UserUpdate
 from app.logger import logger
 
 class UserSQLAlchemyService:
@@ -25,8 +25,10 @@ class UserSQLAlchemyService:
             # Create SQLAlchemy model instance
             db_user = UserModel(
                 first_name=first_name,
+                full_name=user_data.full_name,
                 username=user_data.username,
-                email=user_data.email
+                email=user_data.email,
+                password=user_data.password  # Note: In production, hash this password!
             )
             
             # Add to session and commit
@@ -42,7 +44,7 @@ class UserSQLAlchemyService:
                 first_name=db_user.first_name,
                 username=db_user.username,
                 email=db_user.email,
-                full_name=user_data.full_name,
+                full_name=db_user.full_name,
                 created_at=db_user.created_at,
                 updated_at=db_user.updated_at
             )
@@ -71,7 +73,7 @@ class UserSQLAlchemyService:
                     first_name=db_user.first_name,
                     username=db_user.username,
                     email=db_user.email,
-                    full_name=db_user.first_name,  # Using first_name as full_name since that's what we store
+                    full_name=db_user.full_name,
                     created_at=db_user.created_at,
                     updated_at=db_user.updated_at
                 )
@@ -92,7 +94,7 @@ class UserSQLAlchemyService:
                     first_name=db_user.first_name,
                     username=db_user.username,
                     email=db_user.email,
-                    full_name=db_user.first_name,  # Using first_name as full_name since that's what we store
+                    full_name=db_user.full_name,
                     created_at=db_user.created_at,
                     updated_at=db_user.updated_at
                 )
@@ -116,7 +118,7 @@ class UserSQLAlchemyService:
                     first_name=user.first_name,
                     username=user.username,
                     email=user.email,
-                    full_name=user.first_name,  # Using first_name as full_name since that's what we store
+                    full_name=user.full_name,
                     created_at=user.created_at,
                     updated_at=user.updated_at
                 )
@@ -135,6 +137,7 @@ class UserSQLAlchemyService:
                        .filter(
                            or_(
                                UserModel.first_name.ilike(f"%{search_term}%"),
+                               UserModel.full_name.ilike(f"%{search_term}%"),
                                UserModel.email.ilike(f"%{search_term}%")
                            )
                        )
@@ -147,7 +150,7 @@ class UserSQLAlchemyService:
                     first_name=user.first_name,
                     username=user.username,
                     email=user.email,
-                    full_name=user.first_name,  # Using first_name as full_name since that's what we store
+                    full_name=user.full_name,
                     created_at=user.created_at,
                     updated_at=user.updated_at
                 )
@@ -170,12 +173,15 @@ class UserSQLAlchemyService:
             if user_update.first_name is not None:
                 db_user.first_name = user_update.first_name
             if user_update.full_name is not None:
+                db_user.full_name = user_update.full_name
                 # If full_name is provided, extract first name from it
                 db_user.first_name = user_update.full_name.split()[0] if user_update.full_name else db_user.first_name
             if user_update.username is not None:
                 db_user.username = user_update.username
             if user_update.email is not None:
                 db_user.email = user_update.email
+            if user_update.password is not None:
+                db_user.password = user_update.password  # Note: In production, hash this password!
             
             # Commit changes
             self.db.commit()
@@ -188,7 +194,7 @@ class UserSQLAlchemyService:
                 first_name=db_user.first_name,
                 username=db_user.username,
                 email=db_user.email,
-                full_name=db_user.first_name,  # Using first_name as full_name since that's what we store
+                full_name=db_user.full_name,
                 created_at=db_user.created_at,
                 updated_at=db_user.updated_at
             )

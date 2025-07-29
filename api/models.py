@@ -21,13 +21,15 @@ class UserCreate(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=100, description="User's full name")
     username: str = Field(..., min_length=3, max_length=30, description="Unique username")
     email: EmailStr = Field(..., description="User's email address")
+    password: str = Field(..., min_length=8, max_length=128, description="User's password")
     
     class Config:
         json_schema_extra = {
             "example": {
                 "full_name": "John Doe",
                 "username": "johndoe",
-                "email": "john.doe@example.com"
+                "email": "john.doe@example.com",
+                "password": "securepassword123"
             }
         }
 
@@ -47,3 +49,4 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = Field(None, min_length=1, max_length=100)
     username: Optional[str] = Field(None, min_length=3, max_length=30)
     email: Optional[EmailStr] = None
+    password: Optional[str] = Field(None, min_length=8, max_length=128, description="New password")

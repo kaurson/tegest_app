@@ -53,7 +53,7 @@ python3 setup_database.py
 
 ### 2. Create Initial Migration
 ```bash
-alembic revision --autogenerate -m "Initial migration - create users table"
+alembic revision --autogenerate -m "Initial migration - create users ta"
 ```
 
 ### 3. Apply Migration

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { AlertCircle, CheckCircle, User, Mail, Loader2, AtSign } from 'lucide-react';
+import { AlertCircle, CheckCircle, User, Mail, Loader2, AtSign, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface RegisterFormData {
   full_name: string;
   username: string;
   email: string;
+  password: string;
 }
 
 interface ApiError {
@@ -27,7 +28,8 @@ const UserRegister: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
     full_name: '',
     username: '',
-    email: ''
+    email: '',
+    password: ''
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +65,17 @@ const UserRegister: React.FC = () => {
       errors.email = 'Email is required';
     } else if (!emailRegex.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
+    }
+    
+    // Validate password
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (formData.password.length > 128) {
+      errors.password = 'Password must be less than 128 characters';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      errors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
     }
     
     setValidationErrors(errors);
@@ -255,6 +268,38 @@ const UserRegister: React.FC = () => {
             </div>
             {validationErrors.email && (
               <p className="mt-1 text-sm text-red-600">{validationErrors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <label 
+              htmlFor="password" 
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${
+                  validationErrors.password 
+                    ? 'border-red-300 bg-red-50' 
+                    : 'border-gray-300 bg-white'
+                }`}
+                placeholder="Choose a password"
+                aria-label="Password"
+                tabIndex={0}
+                disabled={isLoading}
+              />
+            </div>
+            {validationErrors.password && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.password}</p>
             )}
           </div>
 
